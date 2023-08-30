@@ -27,7 +27,7 @@ export default function Login() {
       password.current.value
       // name.current.value
     );
-    console.log(message);
+
     setErrorMessage(message);
 
     if (message) return;
@@ -54,7 +54,7 @@ export default function Login() {
               // An error occurred
               // ...
             });
-          console.log(user);
+
           alert("Sign in Successfully!!");
 
           // ...
