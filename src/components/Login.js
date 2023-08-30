@@ -1,10 +1,17 @@
 import React, { useRef, useState } from "react";
 import Header from "./Header";
 import { checkValidation } from "./utils/validate";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
+import { auth } from "./utils/Firebase";
 
 export default function Login() {
   const [errormessage, setErrorMessage] = useState(null);
   const [sign, setSign] = useState(true);
+
   const toogleSignInform = () => {
     setSign(!sign);
   };
@@ -14,16 +21,67 @@ export default function Login() {
 
   const handleFormData = () => {
     // checkValidation(email)
-    console.log(email.current.value);
-    console.log(password.current.value);
 
     const message = checkValidation(
       email.current.value,
-      password.current.value,
-      name.current.value
+      password.current.value
+      // name.current.value
     );
     console.log(message);
     setErrorMessage(message);
+
+    if (message) return;
+    if (!sign) {
+      createUserWithEmailAndPassword(
+        auth,
+        email.current.value,
+        password.current.value
+        // name.current.value
+      )
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          updateProfile(user, {
+            displayName: name.current.value,
+            photoURL: "https://example.com/jane-q-user/profile.jpg",
+          })
+            .then(() => {
+              // Profile updated!
+              // ...
+            })
+            .catch((error) => {
+              setErrorMessage(error);
+              // An error occurred
+              // ...
+            });
+          console.log(user);
+          alert("Sign in Successfully!!");
+
+          // ...
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          // setErrorMessage(errorCode + errorMessage);
+          // ..
+        });
+    } else {
+      signInWithEmailAndPassword(
+        auth,
+        email.current.value,
+        password.current.value
+      )
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+
+          // ...
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+        });
+    }
   };
   return (
     <div>
